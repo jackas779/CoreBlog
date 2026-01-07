@@ -1,0 +1,79 @@
+POST http://localhost:3000/user HTTP/1.1
+content-type: application/json
+
+{
+    "name": "sample",
+    "time": "Wed, 21 Oct 2015 18:27:50 GMT"
+}
+
+###
+
+POST http://localhost:3000/api/user/ HTTP/1.1
+content-type: application/json
+
+{
+    "username": "sample",
+    "time": "Wed, 21 Oct 2015 18:27:50 GMT",
+    "age": 15
+}
+
+
+###
+
+POST http://localhost:3000/api/auth/create HTTP/1.1
+content-type: application/json
+
+{
+    "username": "administrato",
+    "time": "Wed, 21 Oct 2015 18:27:50 GMT",
+    "age": 18,
+    "email": "admin@dominio.com",
+    "first_name": "admin",
+    "last_name": "istrator",
+    "password": "123456789"
+}
+
+
+###
+
+PUT http://localhost:3000/api/user/update/1 HTTP/1.1
+content-type: application/json
+
+{
+    "time": "Wed, 21 Oct 2015 18:27:50 GMT",
+    "age": 18,
+    "first_name" : "juan"
+}
+
+###
+
+DELETE http://localhost:3000/api/user/delete/1 HTTP/1.1
+###
+
+GET http://localhost:3000/api/user/list HTTP/1.1
+
+
+###
+
+POST  http://localhost:3000/api/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "password": "123456789",
+    "username": "administrato"
+}
+
+###
+
+POST  http://localhost:3000/api/post HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOjMsImVtYWlsIjoiYWRtaW5AZG9taW5pby5jb20iLCJyb2xlIjoicGVuZGluZ192ZXJpZmljYXRpb24iLCJpYXQiOjE3Njc2NjE2OTcsImV4cCI6MTc2NzY2ODg5N30.Ynl2M_ML60BFMcAgc7XhUmT-A5F1s_YiobjKRaupPysGwFqzC8DqsI8An-TLVNQ2CzjREd4byv2KTl40zxuU9Q
+
+###
+
+recuerde split(' ')[1] para atrapar el token 
+luego crear una clase para el token para verificar 
+luego de verificar crear un rutas protegidas
+por ultimo implementar el auth que verifica dichas rutas y listo.
+
+if (error.code === 'ERR_JWT_EXPIRED') {
