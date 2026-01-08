@@ -30,6 +30,9 @@ export const auth = async (req,res, next) => {
     if(error.code === 'ERR_JWS_INVALID'){
       next(error)
     }
+    if(error.code === 'ERR_JWT_EXPIRED'){
+      next(error)
+    }
   }
 
   next()

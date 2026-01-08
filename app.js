@@ -3,6 +3,7 @@ import cors from 'cors'
 import { createUserRoute } from './src/routes/user.routes.js'
 import { createAuthRoute } from './src/routes/auth.routes.js'
 import { auth } from './src/middlewares/auth.handles.js'
+import { createPostRouter } from './src/routes/post.routes.js'
 
 
 const app = express()
@@ -12,9 +13,7 @@ app.use(express.json({limit: '5mb'}))
 
 app.use('/api/user',createUserRoute())
 app.use('/api/auth', createAuthRoute())
-app.use('/api/post', auth, (req, res) => {
-  res.status(200).json({status: "welcome"})
-})
+app.use('/api/post', auth, createPostRouter())
 
 app.use((req, res)=>{
   res.json({status: "Not found"})
