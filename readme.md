@@ -1,4 +1,4 @@
-# ✍️ BlogMaster API
+|# ✍️ BlogMaster API
 
 **BlogMaster** es una API RESTful profesional construida con el stack **Node.js, Express y MySQL**. [cite_start]Está diseñada para gestionar el ciclo de vida completo de una plataforma de contenidos, desde la seguridad del usuario hasta el posicionamiento SEO de las publicaciones. [cite: 1, 4]
 
