@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
 import { createUserRoute } from './src/routes/user.routes.js'
 import { createAuthRoute } from './src/routes/auth.routes.js'
 import { auth } from './src/middlewares/auth.handles.js'
@@ -10,6 +11,7 @@ const app = express()
 app.disable('x-powered-by')
 
 app.use(cors())
+app.use(cookieParser())
 app.use(express.json({ limit: '5mb' }))
 
 app.use('/api/user', createUserRoute())

@@ -2,17 +2,13 @@ import * as jose from 'jose'
 import AuthModel from '../models/users/auth.model.js';
 
 export const auth = async (req, res, next) => {
-  const authHeader = req.headers.authorization;
+  const token = req.cookies.token;
 
-  if (!authHeader) {
-    return res.status(401).json({ message: 'Missing Authorization Header' });
+  if (!token) {
+    return res.status(401).json({ message: 'Authentication token not found (Cookie missing)' });
   }
 
-  if (!authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ message: 'Invalid token format' });
-  }
-
-  const jws = authHeader.split(' ')[1];
+  const jws = token;
 
   try {
     const publicKeyJSON = JSON.parse(process.env.PUBLIC_KEY_JSON);
