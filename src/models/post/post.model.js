@@ -1,4 +1,4 @@
-import { pool } from "../database/connectionMySql";
+import { pool } from "../database/connectionMySql.js";
 
 export class PostModel {
   static async createPost({ userId, title, description }) {

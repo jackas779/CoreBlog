@@ -1,13 +1,12 @@
 import { Router } from "express"
+import { PostModel } from "../models/post/post.model.js"
 
 
-export const createPostRouter =  () => {
+export const createPostRouter = () => {
 
   const postRouter = Router()
 
-  postRouter.post('/create', (req, res) => {
-    res.json({message : "se creo algo"})
-  })
+  postRouter.post('/create', PostModel.createPost)
 
 
   return postRouter
