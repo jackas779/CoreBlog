@@ -7,16 +7,20 @@ import { createPostRouter } from './src/routes/post.routes.js'
 
 
 const app = express()
+app.disable('x-powered-by')
 
 app.use(cors())
-app.use(express.json({limit: '5mb'}))
+app.use(express.json({ limit: '5mb' }))
 
-app.use('/api/user',createUserRoute())
+app.use('/api/user', createUserRoute())
 app.use('/api/auth', createAuthRoute())
 app.use('/api/post', auth, createPostRouter())
 
-app.use((req, res)=>{
-  res.json({status: "Not found"})
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: "Not found"
+  })
 })
 
 
@@ -35,6 +39,6 @@ app.use((err, req, res, _next) => {
 
 
 
-app.listen(3000, ()=>{
+app.listen(3000, () => {
   console.log("Escuchando desde el puerto 3000")
 })

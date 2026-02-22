@@ -4,7 +4,7 @@ import bcrypt from "bcrypt"
 
 export default class AuthModel {
 
-    static async #checkExistingUserOrEmail(connection, username, email) {
+  static async #checkExistingUserOrEmail(connection, username, email) {
     const checkUserSql = 'SELECT username, email FROM `users` WHERE `username` = ? OR `email` = ?'
     const [existingUsers] = await connection.execute(checkUserSql, [username, email])
 
@@ -24,7 +24,7 @@ export default class AuthModel {
   static async create(user) {
 
     let connection
-    
+
     try {
 
       const connection = await pool.getConnection()
@@ -39,12 +39,12 @@ export default class AuthModel {
 
 
       // 2. hashear la contraseña
-      
+
       const salt = await bcrypt.genSalt(10)
       const password_hash = await bcrypt.hash(password, salt)
 
       // 3. Insertar el nuevo usuario si no existe
-      const insertSql = "INSERT INTO `users` (`username`,`age`,`email`,`first_name`,`last_name`,`password_hash`) VALUES (?, ?, ?, ?, ?, ?)"
+      const insertSql = "INSERT INTO `users` (`username`,`age`,`email`,`first_name`,`last_name`,`password_hash`, `status`) VALUES (?, ?, ?, ?, ?, ?, 3)"
       const insertValues = [username, age, email, first_name, last_name, password_hash]
 
       const [result] = await connection.execute(insertSql, insertValues)
@@ -61,9 +61,9 @@ export default class AuthModel {
     }
   }
 
-  static async #verifiCredentials (login){
-    
-    const {username = '', email = '', password} = login
+  static async #verifiCredentials(login) {
+
+    const { username = '', email = '', password } = login
 
     let connection
     try {
@@ -73,51 +73,59 @@ export default class AuthModel {
         u.password_hash,
         u.email,
         u.id,
-        s.status_name AS role
+        u.status AS status_id,
+        s.status_name AS status
       FROM
         users AS u
-      INNER  JOIN status AS s
+      INNER JOIN status AS s
       ON 
         u.status = s.id
       WHERE 
         ( u.email = ? OR u.username = ? )`.trim();
 
-      const values  = [ email,username]     
-      const [user] = await connection.execute(sql,values)
+      const values = [email, username]
+      const [user] = await connection.execute(sql, values)
 
-      if(!user || user.length === 0){
-        return {message: "username or password incorrect"}
+      if (!user || user.length === 0) {
+        return { message: "username or password incorrect" }
       }
 
 
 
-      const resultCompare = await bcrypt.compare(password,user[0].password_hash  )
+      const resultCompare = await bcrypt.compare(password, user[0].password_hash)
 
-      if(!resultCompare){
-        return {message: "username or password incorrect"}
+      if (!resultCompare) {
+        return { message: 'username or password incorrect' }
+      }
+
+      if (user[0].status_id !== 1) {
+        const currentStatus = user[0].status.replace(/_/g, ' ')
+        return {
+          message: `Your account is currently ${currentStatus}. It might be disabled or pending activation. Please contact support.`
+        }
       }
 
       return user
 
-    }catch (error){
+    } catch (error) {
       console.error(error)
       throw error
     } finally {
-      if(connection) connection.release()
+      if (connection) connection.release()
     }
 
 
 
   }
 
-  static async login (credentials){ 
+  static async login(credentials) {
 
     const user = await this.#verifiCredentials(credentials)
 
-    if(user.message){
+    if (user.message) {
       return user
     }
-   
+
     // --- AQUÍ GENERAS EL TOKEN ---
     const token = await generarToken(user[0]);
 
@@ -127,25 +135,25 @@ export default class AuthModel {
     }
   }
 
-  static async authorization (credentials){
+  static async authorization(credentials) {
     let connection
-    try{
+    try {
       connection = await pool.getConnection()
-      const sql = 'SELECT is_active FROM status WHERE status_name = ? '
+      const sql = 'SELECT is_active FROM status WHERE id = ? '
 
-      const [rows] = await connection.execute(sql,[credentials.role])
+      const [rows] = await connection.execute(sql, [credentials.status_id])
 
-      if(rows.length === 0 || rows[0].is_active === 0){
+      if (rows.length === 0 || rows[0].is_active === 0) {
         return false
       }
 
       return true
 
-    }catch(error){
+    } catch (error) {
       console.error(error)
       throw error
     } finally {
-      if(connection) connection.release()
+      if (connection) connection.release()
     }
   }
 
